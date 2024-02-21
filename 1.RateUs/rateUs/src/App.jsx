@@ -9,6 +9,8 @@ function App() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const questionsLength = questions.length
 
+  const [hovered, setHovered] = useState(false);
+
   // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   
   const handleNext = (data, indexCurrent) => {
@@ -18,67 +20,89 @@ function App() {
     cardCurrent.style.transform = `translateY(-10000px)`;
     setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
 
+
     const initialTransform = 0.9
 
   };
 
+  const handleBringFront = (id) =>{
+    console.log('Dio click la pregunta , ', id);
+
+  // Iterar sobre todas las tarjetas y resetear estilos
+  questions.forEach((question) => {
+    const card = document.getElementById(question.id);
+
+    card.style.background = ''; // Resetear el color de fondo (o cualquier otro estilo que desees)
+    // Otros estilos que deseas resetear...
+  });
+
+  // Aplicar estilos a la tarjeta seleccionada
+  const cardSelected = document.getElementById(id);
+  cardSelected.style.background = 'red';
+  // Otros estilos que deseas aplicar...
+
+  // Restaurar eventos hover después de cierto tiempo (por ejemplo, 1 segundo)
+  setTimeout(() => {
+    questions.forEach((question) => {
+      const card = document.getElementById(question.id);
+      card.style.pointerEvents = 'auto';
+    });
+  }, 1000);
+  }
+
   return (
     <>
     {/* <Header/> */}
-      <main className='aurora min-h-screen w-full flex justify-center items-center'>
+      <main className='aurora min-h-screen w-full flex justify-center items-center absolute -z-50'>
         <section className='flex h-full flex-col items-center justify-end  w-full'>
-          <div className="flex relative -top-28 shadow-xl py-2 px-4 rounded-full bg-white">
+          <div
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}  className="flex relative -top-28 shadow-xl py-2 px-4 rounded-full bg-white">
             {
               questions.map((question, index) => (
                 <>
-                  <li key={index} className='list-none transition-all  rounded-lg cursor-pointer  py-2.5 px-10  duration-1000 font-medium text-sm hover:bg-gray-300 hover:font-semibold'>{question.id}</li>
+                  <li onClick={ (() =>{ handleBringFront(question.id) })} className='list-none transition-all  rounded-lg cursor-pointer  py-2.5 px-10  duration-1000 font-medium text-sm hover:bg-gray-300 hover:font-semibold'>{question.id}</li>
                 </>
               ))
             }
           </div>
-          <div className="relative flex  justify-center items-center bg-red-50  min-w-[440px] min-h-[290px]">
+          <div className="relative flex  justify-center items-center min-w-[440px] min-h-[290px]">
             {questions.map((question, index) => {
               const zIndex = currentQuestionIndex === index ? 0 : 1;
               const scale = currentQuestionIndex === index ? 1.0 : .999;
               const indexCurrent = questions.length - question.id + 2
-              let top =25
+              let top = 0
               let scaleCard = 0.9
-              let scaleCalculate = 0
               let idCurrent = question.id / 10
-              console.log(question.id > 1 && question.id <= 3);
+  
+ 
               if (question.id <= 3) {
-                if (question.id === 1) scaleCard = 'none' 
-                // top = top * question.id -1
-                console.log('antes de operacion', scaleCard, idCurrent);
                 scaleCard = (scaleCard - idCurrent) + 0.2
-                // console.log('scala: ', scaleCalculate, ' id: ', question.id)
-                console.log('despues ', scaleCard);
-                // return scaleCalculate
-              } else{
-                top = 0
-                scaleCard = 'none'
-                scaleCalculate = 0
               }
 
-              if (question.id === 1) {
-                top = 0;
-              } else if (question.id === 2) {
-                top = 30;
-              } else if (question.id === 3) {
-                top = 60;
+              if (hovered) {
+                if (question.id === 1) {
+                  top = 0;
+                } else if (question.id === 2) {
+                  top = 30;
+                } else if (question.id === 3) {
+                  top = 60;
+                }
               }
                 
+              // console.log('hover', hovered);
 
               return (
                 <>
                   <motion.section
                     key={question.id}
                     id={question.id}
-                    className={`bg-white rounded-xl shadow-md flex flex-col transition-all duration-700 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
+                    className={`bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
                       top: question.id === 1 ? 0 : -top ,
+                      opacity: scaleCard,
                       transform: question.id === 1 ? 'none': `scale(${scaleCard}, ${scaleCard})`,
-                      zIndex: questions.length - question.id + 20,
+                      zIndex: -(question.id - 1) ,
                     }}
                   >
                     <IconX
@@ -105,6 +129,7 @@ function App() {
             })}
           </div>
         </section>
+        
       </main>
     </>
   )
