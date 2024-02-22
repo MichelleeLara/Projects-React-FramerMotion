@@ -26,28 +26,67 @@ function App() {
   };
 
   const handleBringFront = (id) =>{
-    console.log('Dio click la pregunta , ', id);
+    const cards = document.querySelectorAll('.card')
+    
+    let top = 0
+    let scaleCard = 0.9
+    // let idCurrent = question.id / 10
+    // console.log(cards);
+    let zIndexCounter = cards.length;
+    let cardInitail = null
+    
+    cards.forEach((card) =>{
+      let indexChange = ''
+      // console.log('Dio click la pregunta , ', id, 'y su zindex es de: ',  parseInt(card.style.zIndex));
+      
+      if (parseInt(card.style.zIndex) === 0) {
+        // console.log(card, 'identify')
+        cardInitail = card
+        // cardInitail.style.zIndex = 100
+      }
+      const cardId = parseInt(card.id)
+      let cardChange = cardId
+      let cardCurrent = 0
+      if (id === cardId ) {
+        cardChange = card.style.zIndex
+        card.style.top = 0
+        card.style.transform = 'none'
+        card.style.zIndex = 0
+        cardInitail.style.zIndex = cardChange
+        // cardInitail.style.zIndex = cardChange
+        // console.log('modified ', cardInitail);
+        // if () {
+        //   card.style.zIndex = -cardChange
+        //   cardCurrent = 0
+        //   console.log('card cambi', cardChange, 'cardcurrent',  parseInt(card.style.zIndex, 10));
+        // }
 
-  // Iterar sobre todas las tarjetas y resetear estilos
-  questions.forEach((question) => {
-    const card = document.getElementById(question.id);
+      }else{
+        
+        // zIndexCounter--;
+      }
+    })
 
-    card.style.background = ''; // Resetear el color de fondo (o cualquier otro estilo que desees)
-    // Otros estilos que deseas resetear...
-  });
+  // // Iterar sobre todas las tarjetas y resetear estilos
+  // questions.forEach((question) => {
+  //   const card = document.getElementById(question.id);
 
-  // Aplicar estilos a la tarjeta seleccionada
-  const cardSelected = document.getElementById(id);
-  cardSelected.style.background = 'red';
-  // Otros estilos que deseas aplicar...
+  //   card.style.background = ''; // Resetear el color de fondo (o cualquier otro estilo que desees)
+  //   // Otros estilos que deseas resetear...
+  // });
 
-  // Restaurar eventos hover después de cierto tiempo (por ejemplo, 1 segundo)
-  setTimeout(() => {
-    questions.forEach((question) => {
-      const card = document.getElementById(question.id);
-      card.style.pointerEvents = 'auto';
-    });
-  }, 1000);
+  // // Aplicar estilos a la tarjeta seleccionada
+  // const cardSelected = document.getElementById(id);
+  // cardSelected.style.background = 'red';
+  // // Otros estilos que deseas aplicar...
+
+  // // Restaurar eventos hover después de cierto tiempo (por ejemplo, 1 segundo)
+  // setTimeout(() => {
+  //   questions.forEach((question) => {
+  //     const card = document.getElementById(question.id);
+  //     card.style.pointerEvents = 'auto';
+  //   });
+  // }, 1000);
   }
 
   return (
@@ -68,8 +107,11 @@ function App() {
           </div>
           <div className="relative flex  justify-center items-center min-w-[440px] min-h-[290px]">
             {questions.map((question, index) => {
-              const zIndex = currentQuestionIndex === index ? 0 : 1;
-              const scale = currentQuestionIndex === index ? 1.0 : .999;
+              const cards = document.querySelectorAll('.card')
+              cards.forEach((card) =>{
+                
+                console.log(parseInt(card.style.zIndex) === -1);
+              })
               const indexCurrent = questions.length - question.id + 2
               let top = 0
               let scaleCard = 0.9
@@ -97,7 +139,7 @@ function App() {
                   <motion.section
                     key={question.id}
                     id={question.id}
-                    className={`bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
+                    className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
                       top: question.id === 1 ? 0 : -top ,
                       opacity: scaleCard,
