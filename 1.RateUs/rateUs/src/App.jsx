@@ -108,29 +108,74 @@ function App() {
           <div className="relative flex  justify-center items-center min-w-[440px] min-h-[290px]">
             {questions.map((question, index) => {
               const cards = document.querySelectorAll('.card')
-              cards.forEach((card) =>{
-                
-                console.log(parseInt(card.style.zIndex) === -1);
-              })
               const indexCurrent = questions.length - question.id + 2
-              let top = 0
               let scaleCard = 0.9
               let idCurrent = question.id / 10
-  
- 
-              if (question.id <= 3) {
-                scaleCard = (scaleCard - idCurrent) + 0.2
-              }
+              let cardIndex = 0
+              let top = 0
 
-              if (hovered) {
-                if (question.id === 1) {
-                  top = 0;
-                } else if (question.id === 2) {
-                  top = 30;
-                } else if (question.id === 3) {
-                  top = 60;
+              // const zIndexValue = cards[index] ? parseInt(cards[index].style.zIndex) : null;
+
+              // Verifica que el índice esté dentro del rango de cards
+              if (index >= 0 && index < cards.length) {
+                const zIndexValue = parseInt(cards[index].style.zIndex);
+                
+
+                console.log(zIndexValue < 0 && zIndexValue >= -3);
+                if (zIndexValue < 0 && zIndexValue >= -3) {
+                  
+                  console.log('scale', scaleCard, 'indez', Math.abs(cardIndex / 10), 'operation', scaleCard - Math.abs(cardIndex / 10));
+                  scaleCard = scaleCard - Math.abs(cardIndex / 10);
+                  cards[index].style.transform = `scale(${scaleCard - Math.abs(zIndexValue / 10)},${scaleCard - Math.abs(zIndexValue / 10)})`;
+                  cards[index].style.opacity = scaleCard - Math.abs(zIndexValue / 10);
+                }
+                
+                if (hovered) {
+                  if (zIndexValue === 0) {
+                    cards[index].style.opacity = 1;
+                    top = 0;
+                  } else if (zIndexValue === -1) {
+                    top = 30;
+                  } else if (zIndexValue === -2) {
+                    top = 60;
+                  }
                 }
               }
+
+
+              // console.log('value', top);
+              // cards.forEach((card) =>{
+              //   // console.log(parseInt(card.style.zIndex));
+              //   cardIndex = parseInt(card.style.zIndex)
+              //   if (cardIndex === 0) {
+              //     card.style.opacity = 1
+              //   }
+              //   if (cardIndex <= 3) {
+              //     // console.log('scale', scaleCard, 'indez', Math.abs(cardIndex/10), 'operation', scaleCard - Math.abs(cardIndex/10));
+              //     // scaleCard = scaleCard - Math.abs(cardIndex/10)
+              //     card.style.transform = `scale(${scaleCard - Math.abs(cardIndex/10)},${scaleCard - Math.abs(cardIndex/10)})`
+              //     card.style.opacity = scaleCard - Math.abs(cardIndex/10)
+              //   }
+              //   // console.log('antes de entrar al if', cardIndex, cardIndex === -3);
+              //   if (hovered) {
+              //     if (cardIndex === 0) {
+              //       card.style.top = 0
+              //       top = 0
+              //     } else if (cardIndex === -1) {
+              //       card.style.top = 30
+              //       top = 30
+              //     } else if (cardIndex === -2) {
+              //       card.style.top = 60
+              //       top = 610
+              //     }
+              //   }
+              // })
+  
+ 
+              // if (question.id <= 3) {
+              //   scaleCard = (scaleCard - idCurrent) + 0.2
+              // }
+
                 
               // console.log('hover', hovered);
 
@@ -141,9 +186,9 @@ function App() {
                     id={question.id}
                     className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
-                      top: question.id === 1 ? 0 : -top ,
-                      opacity: scaleCard,
-                      transform: question.id === 1 ? 'none': `scale(${scaleCard}, ${scaleCard})`,
+                      top: -top ,
+                      // opacity: scaleCard,
+                      transform:`scale(${scaleCard}, ${scaleCard})`,
                       zIndex: -(question.id - 1) ,
                     }}
                   >
