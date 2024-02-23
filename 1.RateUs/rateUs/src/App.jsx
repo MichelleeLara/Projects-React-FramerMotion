@@ -6,87 +6,43 @@ import { motion, px } from 'framer-motion'
 
 function App() {
 
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const questionsLength = questions.length
 
   const [hovered, setHovered] = useState(false);
-
-  // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  
   const handleNext = (data, indexCurrent) => {
     const cardCurrent = document.getElementById(data.id)
     console.log('tamño questions', questionsLength, '  index actual ', indexCurrent);
     cardCurrent.style.zIndex =  questionsLength + 1 - indexCurrent
     cardCurrent.style.transform = `translateY(-10000px)`;
     setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
-
-
-    const initialTransform = 0.9
-
   };
 
   const handleBringFront = (id) =>{
     const cards = document.querySelectorAll('.card')
-    
-    let top = 0
-    let scaleCard = 0.9
-    // let idCurrent = question.id / 10
-    // console.log(cards);
-    let zIndexCounter = cards.length;
+  
     let cardInitail = null
     
     cards.forEach((card) =>{
-      let indexChange = ''
-      // console.log('Dio click la pregunta , ', id, 'y su zindex es de: ',  parseInt(card.style.zIndex));
-      
       if (parseInt(card.style.zIndex) === 0) {
-        // console.log(card, 'identify')
         cardInitail = card
-        // cardInitail.style.zIndex = 100
       }
       const cardId = parseInt(card.id)
       let cardChange = cardId
-      let cardCurrent = 0
       if (id === cardId ) {
+        let Scale = card.style.transform
+        console.log('card a cambio', Scale);
+        let Top = card.style.top
         cardChange = card.style.zIndex
+        
         card.style.top = 0
         card.style.transform = 'none'
         card.style.zIndex = 0
         cardInitail.style.zIndex = cardChange
-        // cardInitail.style.zIndex = cardChange
-        // console.log('modified ', cardInitail);
-        // if () {
-        //   card.style.zIndex = -cardChange
-        //   cardCurrent = 0
-        //   console.log('card cambi', cardChange, 'cardcurrent',  parseInt(card.style.zIndex, 10));
-        // }
-
-      }else{
-        
-        // zIndexCounter--;
+        cardInitail.style.transform = Scale
+        cardInitail.style.top = Top
       }
     })
-
-  // // Iterar sobre todas las tarjetas y resetear estilos
-  // questions.forEach((question) => {
-  //   const card = document.getElementById(question.id);
-
-  //   card.style.background = ''; // Resetear el color de fondo (o cualquier otro estilo que desees)
-  //   // Otros estilos que deseas resetear...
-  // });
-
-  // // Aplicar estilos a la tarjeta seleccionada
-  // const cardSelected = document.getElementById(id);
-  // cardSelected.style.background = 'red';
-  // // Otros estilos que deseas aplicar...
-
-  // // Restaurar eventos hover después de cierto tiempo (por ejemplo, 1 segundo)
-  // setTimeout(() => {
-  //   questions.forEach((question) => {
-  //     const card = document.getElementById(question.id);
-  //     card.style.pointerEvents = 'auto';
-  //   });
-  // }, 1000);
   }
 
   return (
@@ -113,24 +69,19 @@ function App() {
               let idCurrent = question.id / 10
               let cardIndex = 0
               let top = 0
+              let zIndexValue = 0
 
-              // const zIndexValue = cards[index] ? parseInt(cards[index].style.zIndex) : null;
-
-              // Verifica que el índice esté dentro del rango de cards
               if (index >= 0 && index < cards.length) {
-                const zIndexValue = parseInt(cards[index].style.zIndex);
-                
-
-                console.log(zIndexValue < 0 && zIndexValue >= -3);
-                if (zIndexValue < 0 && zIndexValue >= -3) {
-                  
-                  console.log('scale', scaleCard, 'indez', Math.abs(cardIndex / 10), 'operation', scaleCard - Math.abs(cardIndex / 10));
-                  scaleCard = scaleCard - Math.abs(cardIndex / 10);
-                  cards[index].style.transform = `scale(${scaleCard - Math.abs(zIndexValue / 10)},${scaleCard - Math.abs(zIndexValue / 10)})`;
-                  cards[index].style.opacity = scaleCard - Math.abs(zIndexValue / 10);
-                }
+                zIndexValue = parseInt(cards[index].style.zIndex);
+      
                 
                 if (hovered) {
+                  if (zIndexValue < 0 && zIndexValue >= -3) {
+ 
+                    scaleCard = scaleCard - Math.abs(cardIndex / 10);
+                    cards[index].style.transform = `scale(${scaleCard - Math.abs(zIndexValue / 10) + 0.1},${scaleCard - Math.abs(zIndexValue / 10) + 0.1})`;
+                    cards[index].style.opacity = scaleCard - Math.abs(zIndexValue / 10);
+                  }
                   if (zIndexValue === 0) {
                     cards[index].style.opacity = 1;
                     top = 0;
@@ -142,43 +93,6 @@ function App() {
                 }
               }
 
-
-              // console.log('value', top);
-              // cards.forEach((card) =>{
-              //   // console.log(parseInt(card.style.zIndex));
-              //   cardIndex = parseInt(card.style.zIndex)
-              //   if (cardIndex === 0) {
-              //     card.style.opacity = 1
-              //   }
-              //   if (cardIndex <= 3) {
-              //     // console.log('scale', scaleCard, 'indez', Math.abs(cardIndex/10), 'operation', scaleCard - Math.abs(cardIndex/10));
-              //     // scaleCard = scaleCard - Math.abs(cardIndex/10)
-              //     card.style.transform = `scale(${scaleCard - Math.abs(cardIndex/10)},${scaleCard - Math.abs(cardIndex/10)})`
-              //     card.style.opacity = scaleCard - Math.abs(cardIndex/10)
-              //   }
-              //   // console.log('antes de entrar al if', cardIndex, cardIndex === -3);
-              //   if (hovered) {
-              //     if (cardIndex === 0) {
-              //       card.style.top = 0
-              //       top = 0
-              //     } else if (cardIndex === -1) {
-              //       card.style.top = 30
-              //       top = 30
-              //     } else if (cardIndex === -2) {
-              //       card.style.top = 60
-              //       top = 610
-              //     }
-              //   }
-              // })
-  
- 
-              // if (question.id <= 3) {
-              //   scaleCard = (scaleCard - idCurrent) + 0.2
-              // }
-
-                
-              // console.log('hover', hovered);
-
               return (
                 <>
                   <motion.section
@@ -188,7 +102,7 @@ function App() {
                     style={{
                       top: -top ,
                       // opacity: scaleCard,
-                      transform:`scale(${scaleCard}, ${scaleCard})`,
+                      transform:zIndexValue === 0 ? 0 : `scale(${scaleCard - index/10 + 0}, ${scaleCard - index/10 + 0})`,
                       zIndex: -(question.id - 1) ,
                     }}
                   >
