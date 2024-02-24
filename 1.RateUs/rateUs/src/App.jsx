@@ -119,7 +119,7 @@ function App() {
                   <motion.section
                     key={question.id}
                     id={question.id}
-                    className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
+                    className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-12 px-32 gap-5 text-center items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
                       top: -top ,
                       opacity: scaleCard-index / 10 + 0.1,
@@ -127,12 +127,10 @@ function App() {
                       zIndex: -(question.id - 1) ,
                     }}
                   >
-                    <IconX
-                      size={20}
-                      className='text-[#666666] absolute top-4 right-4 cursor-pointer rounded-2xl p-1 transition-all hover:bg-[#666666] hover:text-white'
-                    />
-                    <p className='text-lg font-semibold'>Calificanos !</p>
-                    <p className='text-base'>{question.question}</p>
+                    <div className=" rounded-full bg-[#057fff]">
+                      <p className='p-3 px-5 text-white font-semibold'>{index + 1}</p>
+                    </div>
+                    <p className='font-semibold text-base'>{question.question}</p>
                     <div className='flex gap-4 '>
                       <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
                       <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
@@ -141,9 +139,6 @@ function App() {
                       <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
                     </div>
                     <p className='text-sm text-[#666666] font-semibold'>info choose render</p>
-                    <button onClick={() =>{handleNext(question, indexCurrent)}} className='bg-[#057fff] py-1.5 px-10 w-fit rounded-lg text-white mt-7 mb-6'>
-                      Siguiente
-                    </button>
                   </motion.section>
                 
                 </>
