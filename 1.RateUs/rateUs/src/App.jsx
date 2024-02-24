@@ -18,31 +18,51 @@ function App() {
     setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
   };
 
-  const handleBringFront = (id) =>{
-    const cards = document.querySelectorAll('.card')
-  
-    let cardInitail = null
+  const handleBringFront = (id) => {
+    const cards = document.querySelectorAll('.card');
     
-    cards.forEach((card) =>{
+    let cardInitail = null;
+    let cardForChange = null;
+    
+    cards.forEach((card) => {
       if (parseInt(card.style.zIndex) === 0) {
-        cardInitail = card
+        cardInitail = card;
       }
-      const cardId = parseInt(card.id)
-      let cardChange = cardId
-      if (id === cardId ) {
-        let Scale = card.style.transform
-        console.log('card a cambio', Scale);
-        let Top = card.style.top
-        cardChange = card.style.zIndex
-        
-        card.style.top = 0
-        card.style.transform = 'none'
-        card.style.zIndex = 0
-        cardInitail.style.zIndex = cardChange
-        cardInitail.style.transform = Scale
-        cardInitail.style.top = Top
+      
+      const cardId = parseInt(card.id);
+  
+      if (id === cardId) {
+        cardForChange = card;
       }
-    })
+    });
+  
+    try {
+      if (cardInitail && cardForChange) {
+        const scaleCardInitial = cardInitail.style.transform;
+        const topCardInitial = cardInitail.style.top;
+        const opacityCardInitial = cardInitail.style.opacity;
+        const zIndexCardInitial = cardInitail.style.zIndex;
+  
+        const scaleCardChange = cardForChange.style.transform;
+        const topCardChange = cardForChange.style.top;
+        const opacityCardChange = cardForChange.style.opacity;
+        const zIndexCardChange = cardForChange.style.zIndex;
+  
+        cardForChange.style.transform = scaleCardInitial;
+        cardForChange.style.top = topCardInitial;
+        cardForChange.style.opacity = opacityCardInitial;
+        cardForChange.style.zIndex = zIndexCardInitial;
+  
+        cardInitail.style.transform = scaleCardChange;
+        cardInitail.style.top = topCardChange;
+        cardInitail.style.opacity = opacityCardChange;
+        cardInitail.style.zIndex = zIndexCardChange;
+      } else {
+        console.log('No se encontraron tarjetas para intercambiar.');
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -66,7 +86,6 @@ function App() {
               const cards = document.querySelectorAll('.card')
               const indexCurrent = questions.length - question.id + 2
               let scaleCard = 0.9
-              let idCurrent = question.id / 10
               let cardIndex = 0
               let top = 0
               let zIndexValue = 0
@@ -76,23 +95,25 @@ function App() {
       
                 
                 if (hovered) {
-                  if (zIndexValue < 0 && zIndexValue >= -3) {
+                  if (zIndexValue < 0 && zIndexValue >= -5) {
  
                     scaleCard = scaleCard - Math.abs(cardIndex / 10);
                     cards[index].style.transform = `scale(${scaleCard - Math.abs(zIndexValue / 10) + 0.1},${scaleCard - Math.abs(zIndexValue / 10) + 0.1})`;
-                    cards[index].style.opacity = scaleCard - Math.abs(zIndexValue / 10);
+                    // cards[index].style.opacity = scaleCard - Math.abs(zIndexValue / 10);
                   }
                   if (zIndexValue === 0) {
-                    cards[index].style.opacity = 1;
+                    // cards[index].style.opacity = 1;
                     top = 0;
                   } else if (zIndexValue === -1) {
                     top = 30;
                   } else if (zIndexValue === -2) {
                     top = 60;
                   }
+                } else{
+                  // console.log('salio del hover');
+                  cards[index].style.top = 0
                 }
               }
-
               return (
                 <>
                   <motion.section
@@ -101,8 +122,8 @@ function App() {
                     className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-5 px-32 gap-4 items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
                       top: -top ,
-                      // opacity: scaleCard,
-                      transform:zIndexValue === 0 ? 0 : `scale(${scaleCard - index/10 + 0}, ${scaleCard - index/10 + 0})`,
+                      opacity: scaleCard-index / 10 + 0.1,
+                      transform:`scale(${scaleCard - index/10 + 0.1}, ${scaleCard - index/10 + 0.1})`,
                       zIndex: -(question.id - 1) ,
                     }}
                   >
