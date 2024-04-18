@@ -1,24 +1,30 @@
-import { useEffect, useState } from 'react'
-import Header from './Components/Header'
-import { IconX, IconStar } from '@tabler/icons-react'
+import {  useEffect, useState } from 'react'
+import { IconStar } from '@tabler/icons-react'
 import { questions } from './Components/constants/questionRate' 
 import { motion, px } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 
 function App() {
 
   // const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const questionsLength = questions.length
+  // const questionsLength = questions.length
 
   const [hovered, setHovered] = useState(false);
-  const handleNext = (data, indexCurrent) => {
-    const cardCurrent = document.getElementById(data.id)
-    console.log('tamño questions', questionsLength, '  index actual ', indexCurrent);
-    cardCurrent.style.zIndex =  questionsLength + 1 - indexCurrent
-    cardCurrent.style.transform = `translateY(-10000px)`;
-    setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
-  };
+  const [currentNav, setCurrentNav] = useState("0")
+  const [rating, setRating] = useState("0")
+  const [cardRating, setCardRating] = useState({})
+  const history = useNavigate()
+  // const rated = false
+  // const handleNext = (data, indexCurrent) => {
+  //   const cardCurrent = document.getElementById(data.id)
+  //   console.log('tamño questions', questionsLength, '  index actual ', indexCurrent);
+  //   cardCurrent.style.zIndex =  questionsLength + 1 - indexCurrent
+  //   cardCurrent.style.transform = `translateY(-10000px)`;
+  //   // setCurrentQuestionIndex((prevIndex) => (prevIndex + 1) % questions.length);
+  // };
 
-  const handleBringFront = (id) => {
+  const handleBringFront = (id, index) => {
+    setCurrentNav(index)
     const cards = document.querySelectorAll('.card');
     
     let cardInitail = null;
@@ -38,6 +44,10 @@ function App() {
   
     try {
       if (cardInitail && cardForChange) {
+        if (parseInt(cardForChange.id) > 3 ) {
+          // console.log('catrtda entro', cardForChange);
+        }
+        // console.log(parseInt(cardForChange).id);
         const scaleCardInitial = cardInitail.style.transform;
         const topCardInitial = cardInitail.style.top;
         const opacityCardInitial = cardInitail.style.opacity;
@@ -58,11 +68,36 @@ function App() {
         cardInitail.style.opacity = opacityCardChange;
         cardInitail.style.zIndex = zIndexCardChange;
       } else {
-        console.log('No se encontraron tarjetas para intercambiar.');
+        // console.log('No se encontraron tarjetas para intercambiar.');
       }
     } catch (error) {
       console.log(error);
     }
+  }
+
+  // console.log('etsado.', cardRating);
+
+  const isComplete = () =>{
+    return Object.keys(cardRating).length === 5;
+  }
+
+  useEffect(() => {
+    if (isComplete()) {
+      return history('/thanks');
+
+    }
+  }) 
+
+  const handleRating = (cardId,value) => {
+    setCardRating((prevRating) => ({
+      ...prevRating,
+      [cardId]:{
+        value,
+        rated: true
+      }
+    }))
+    // console.log('idx', value);
+    // setRating(value);
   }
 
   return (
@@ -72,17 +107,27 @@ function App() {
         <section className='flex h-full flex-col items-center justify-end  w-full'>
           <div
             onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}  className="flex relative -top-28 shadow-xl py-2 px-4 rounded-full bg-white">
+            onMouseLeave={() => setHovered(false)}  className="flex relative -top-28 shadow-xl gap-4 py-1 px-4 rounded-full bg-white">
             {
-              questions.map((question, index) => (
-                <>
-                  <li onClick={ (() =>{ handleBringFront(question.id) })} className='list-none transition-all  rounded-lg cursor-pointer  py-2.5 px-10  duration-1000 font-medium text-sm hover:bg-gray-300 hover:font-semibold'>{question.id}</li>
-                </>
-              ))
+              questions.map((question, index) => {
+                const isRated = cardRating[question.id] || {}
+                const { value = 0 , rated = false } = isRated
+                console.log('isRateeeeeeeeeeeed', isRated);
+                return(
+                  <>
+                    <li onClick={ (() =>{ handleBringFront(question.id, index) })} className={`${currentNav == index ? 'bg-gray-300' : ''} ${rated && 'bg-green-300'} list-none transition-all  rounded-lg cursor-pointer  py-1.5 px-6  duration-500 font-medium text-sm hover:bg-gray-300 hover:font-semibold`}>{question.id}</li>
+                  </>
+                )
+              })
             }
           </div>
           <div className="relative flex  justify-center items-center min-w-[440px] min-h-[290px]">
             {questions.map((question, index) => {
+
+              const cardRatingg = cardRating[question.id] || {};
+              // console.log('esto es cardRaingg' ,  cardRatingg);
+              const { value = 0 , rated = false} = cardRatingg
+
               const cards = document.querySelectorAll('.card')
               const indexCurrent = questions.length - question.id + 2
               let scaleCard = 0.9
@@ -90,9 +135,12 @@ function App() {
               let top = 0
               let zIndexValue = 0
 
+
+              // console.log('rated', rated);
+
               if (index >= 0 && index < cards.length) {
                 zIndexValue = parseInt(cards[index].style.zIndex);
-      
+
                 
                 if (hovered) {
                   if (zIndexValue < 0 && zIndexValue >= -5) {
@@ -108,6 +156,12 @@ function App() {
                     top = 30;
                   } else if (zIndexValue === -2) {
                     top = 60;
+                  } else if (zIndexValue === -3){
+                    top = 90;
+                    // indez =index * 2
+                  }else if (zIndexValue === -4){
+                    top = 120;
+                    // indez =index * 2
                   }
                 } else{
                   // console.log('salio del hover');
@@ -119,7 +173,7 @@ function App() {
                   <motion.section
                     key={question.id}
                     id={question.id}
-                    className={`card bg-white rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-12 px-32 gap-5 text-center items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
+                    className={`card bg-white max-h-[275px] rounded-xl shadow-md flex flex-col transition-all duration-300 absolute z-30 h-fit  py-12 px-32 gap-5 text-center items-center translate-x-[rem] border-2 bg-primary-400 origin-[top-center]`}
                     style={{
                       top: -top ,
                       opacity: scaleCard-index / 10 + 0.1,
@@ -131,14 +185,33 @@ function App() {
                       <p className='p-3 px-5 text-white font-semibold'>{index + 1}</p>
                     </div>
                     <p className='font-semibold text-base'>{question.question}</p>
-                    <div className='flex gap-4 '>
+                    <div className='flex gap-4 flex-col'>
+                      <div className="flex">
+                        {
+                          Array.from({ length: 5 }, (_,idx) => {
+                            
+
+                            return(
+                              <>
+                                <IconStar key={idx} className={`${idx < value ? 'fill-[#057fff] text-[#057fff]' : 'fill-[#ccc] text-[#ccc]'} cursor-pointer`} onClick={() =>{handleRating(question.id, idx + 1)}} />
+                              </>
+                            )
+                            
+                          })
+                        }
+                      </div>
+                      <div className="">
+                        {
+                          rated && (
+                            <span className='text-sm text-[#666666] font-semibold'>Gracias por calificar!</span>
+                          )
+                        }
+                      </div>
+                      {/* <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
                       <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
                       <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
-                      <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
-                      <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
-                      <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' />
+                      <IconStar className='fill-[#057fff] text-[#057fff] cursor-pointer' /> */}
                     </div>
-                    <p className='text-sm text-[#666666] font-semibold'>info choose render</p>
                   </motion.section>
                 
                 </>
